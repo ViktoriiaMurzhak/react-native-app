@@ -28,7 +28,6 @@ export default function LoginScreen({ navigation }) {
     setIsShowKeyboard(false)
     Keyboard.dismiss()
     console.log('state', state)
-
     setState(initialState)
 
     // navigation.navigate("Home");
@@ -43,7 +42,7 @@ export default function LoginScreen({ navigation }) {
     <TouchableWithoutFeedback onPress={keyboardHide}>
       <View style={styles.container}>
         <ImageBackground
-          source={require('../assets/img/photo-bg.jpg')}
+          source={require('../../assets/img/photo-bg.jpg')}
           style={styles.image}
         >
           <View

@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
-
+import { Camera, CameraType } from 'expo-camera'
 import { StatusBar } from 'expo-status-bar'
+import { AntDesign } from '@expo/vector-icons'
 import {
   StyleSheet,
   Text,
@@ -24,15 +25,21 @@ export default function RegistrationScreen({ navigation }) {
   const [isShowKeyboard, setIsShowKeyboard] = useState(false)
   const [state, setState] = useState(initialState)
   const [isPasswordSecure, setIsPasswordSecure] = useState(true)
+  const [camera, setCamera] = useState(null)
+
+  const [isCameraReady, setIsCameraReady] = useState(true)
+
+  const onCameraReady = () => {
+    setIsCameraReady(true)
+  }
 
   const registration = () => {
     setIsShowKeyboard(false)
     Keyboard.dismiss()
     console.log('state', state)
-
     setState(initialState)
 
-    // navigation.navigate("Home");
+    // navigation.navigate('Posts')
   }
 
   const keyboardHide = () => {
@@ -40,11 +47,16 @@ export default function RegistrationScreen({ navigation }) {
     Keyboard.dismiss()
   }
 
+  const takePhoto = async () => {
+    const photo = await camera.takePictureAsync()
+    console.log(photo)
+  }
+
   return (
     <TouchableWithoutFeedback onPress={keyboardHide}>
       <View style={styles.container}>
         <ImageBackground
-          source={require('../assets/img/photo-bg.jpg')}
+          source={require('../../assets/img/photo-bg.jpg')}
           style={styles.image}
         >
           <View
@@ -60,6 +72,19 @@ export default function RegistrationScreen({ navigation }) {
               }),
             }}
           >
+            <Camera
+              style={styles.camera}
+              ref={setCamera}
+              type={CameraType.front}
+              onCameraReady={onCameraReady}
+            >
+              <TouchableOpacity
+                style={{ position: 'absolute', bottom: 14, right: -12.5 }}
+                onPress={takePhoto}
+              >
+                <AntDesign name="pluscircleo" size={25} color="#FF6C00" />
+              </TouchableOpacity>
+            </Camera>
             <KeyboardAvoidingView
               behavior={Platform.OS == 'ios' ? 'padding' : 'height'}
             >
@@ -135,12 +160,22 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   form: {
+    position: 'relative',
     backgroundColor: '#FFFFFF',
     borderTopLeftRadius: 25,
     borderTopRightRadius: 25,
     paddingTop: 92,
     paddingBottom: 78,
     // height: 549,
+  },
+  camera: {
+    position: 'absolute',
+    top: -60,
+    left: '35%',
+    width: 120,
+    height: 120,
+    backgroundColor: '#F6F6F6',
+    borderRadius: 16,
   },
   title: {
     marginBottom: 16,
