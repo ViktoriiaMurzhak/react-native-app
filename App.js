@@ -17,7 +17,7 @@ const loadFonts = async () => {
 
 export default function App() {
   const [isReady, setIsReady] = useState(false)
-  const routing = useRoute(false)
+  const routing = useRoute(true)
 
   if (!isReady) {
     return (

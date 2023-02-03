@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Camera, CameraType } from 'expo-camera'
+
 import { StatusBar } from 'expo-status-bar'
 import { AntDesign } from '@expo/vector-icons'
 import {
@@ -13,7 +13,9 @@ import {
   KeyboardAvoidingView,
   Keyboard,
   TouchableWithoutFeedback,
+  Image,
 } from 'react-native'
+import { Camera, CameraType } from 'expo-camera'
 
 const initialState = {
   login: '',
@@ -26,11 +28,12 @@ export default function RegistrationScreen({ navigation }) {
   const [state, setState] = useState(initialState)
   const [isPasswordSecure, setIsPasswordSecure] = useState(true)
   const [camera, setCamera] = useState(null)
+  const [photo, setPhoto] = useState('')
 
-  const [isCameraReady, setIsCameraReady] = useState(true)
-
-  const onCameraReady = () => {
-    setIsCameraReady(true)
+  const takePhoto = async () => {
+    const { status } = await Camera.requestCameraPermissionsAsync()
+    const photo = await camera.takePictureAsync()
+    setPhoto(photo.uri)
   }
 
   const registration = () => {
@@ -45,11 +48,6 @@ export default function RegistrationScreen({ navigation }) {
   const keyboardHide = () => {
     setIsShowKeyboard(false)
     Keyboard.dismiss()
-  }
-
-  const takePhoto = async () => {
-    const photo = await camera.takePictureAsync()
-    console.log(photo)
   }
 
   return (
@@ -76,15 +74,49 @@ export default function RegistrationScreen({ navigation }) {
               style={styles.camera}
               ref={setCamera}
               type={CameraType.front}
-              onCameraReady={onCameraReady}
             >
+              {photo && (
+                <>
+                  <View style={styles.takePhotoContainer}>
+                    <Image source={{ uri: photo }} style={styles.photo} />
+                  </View>
+                </>
+              )}
+            </Camera>
+            {photo && (
               <TouchableOpacity
-                style={{ position: 'absolute', bottom: 14, right: -12.5 }}
+                onPress={() => {
+                  setPhoto('')
+                }}
+                style={{
+                  position: 'absolute',
+                  bottom: 510,
+                  right: 136,
+                  width: 24,
+                  height: 24,
+                  backgroundColor: '#ffffff',
+                  borderRadius: 50,
+                  borderWidth: 1,
+                  borderColor: '#E8E8E8',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+              >
+                <AntDesign name="close" size={20} color="#BDBDBD" />
+              </TouchableOpacity>
+            )}
+            {!photo && (
+              <TouchableOpacity
+                style={{
+                  position: 'absolute',
+                  bottom: 510,
+                  right: 136,
+                }}
                 onPress={takePhoto}
               >
                 <AntDesign name="pluscircleo" size={25} color="#FF6C00" />
               </TouchableOpacity>
-            </Camera>
+            )}
             <KeyboardAvoidingView
               behavior={Platform.OS == 'ios' ? 'padding' : 'height'}
             >
@@ -175,6 +207,13 @@ const styles = StyleSheet.create({
     width: 120,
     height: 120,
     backgroundColor: '#F6F6F6',
+
+    borderRadius: 16,
+    overflow: 'hidden',
+  },
+  photo: {
+    width: 120,
+    height: 120,
     borderRadius: 16,
   },
   title: {
@@ -234,5 +273,8 @@ const styles = StyleSheet.create({
     fontFamily: 'Roboto-Regular',
     fontSize: 16,
     lineHeight: 19,
+  },
+  takePhotoContainer: {
+    position: 'absolute',
   },
 })
