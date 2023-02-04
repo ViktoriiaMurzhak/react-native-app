@@ -1,19 +1,42 @@
 import React from 'react'
-import { Text, View, StyleSheet } from 'react-native'
+import { createStackNavigator } from '@react-navigation/stack'
 
-export default function PostsScreen({ route }) {
-  console.log('route.params', route.params)
+import Home from '../nestedScreens/Home'
+import CommentsScreen from '../nestedScreens/CommentsScreen'
+import MapScreen from '../nestedScreens/MapScreen'
+import { TouchableOpacity } from 'react-native'
+import { Feather } from '@expo/vector-icons'
+
+const NestedScreen = createStackNavigator()
+
+export default function PostsScreen() {
   return (
-    <View style={styles.container}>
-      <Text>PostsScreen</Text>
-    </View>
+    <NestedScreen.Navigator>
+      <NestedScreen.Screen
+        name="Home"
+        component={Home}
+        options={{
+          title: 'Публікації',
+          headerTitleStyle: {
+            color: '#212121',
+            fontFamily: 'Roboto-Medium',
+            fontSize: 17,
+            lineHeight: 22,
+            letterSpacing: -0.408,
+            background: '#FFFFFF',
+          },
+          headerRight: () => (
+            <TouchableOpacity
+              style={{ marginRight: 16 }}
+              // onPress={signOut}
+            >
+              <Feather name="log-out" size={24} color="#BDBDBD" />
+            </TouchableOpacity>
+          ),
+        }}
+      />
+      <NestedScreen.Screen name="Comments" component={CommentsScreen} />
+      <NestedScreen.Screen name="Map" component={MapScreen} />
+    </NestedScreen.Navigator>
   )
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-})

@@ -12,7 +12,6 @@ import ProfileScreen from './Screens/main/ProfileScreen.jsx'
 // icons import
 import { AntDesign } from '@expo/vector-icons'
 import { Feather } from '@expo/vector-icons'
-import { TouchableOpacity } from 'react-native'
 
 const AuthStack = createStackNavigator()
 const MainTab = createBottomTabNavigator()
@@ -44,26 +43,10 @@ export const useRoute = (isAuth) => {
         name="Posts"
         component={PostsScreen}
         options={{
-          title: 'Публікації',
-          headerTitleStyle: {
-            color: '#212121',
-            fontFamily: 'Roboto-Medium',
-            fontSize: 17,
-            lineHeight: 22,
-            letterSpacing: -0.408,
-            background: '#FFFFFF',
-          },
+          headerShown: false,
           tabBarShowLabel: false,
           tabBarIcon: ({ focused, size, color }) => (
             <Feather name="grid" size={24} color="rgba(33, 33, 33, 0.8)" />
-          ),
-          headerRight: () => (
-            <TouchableOpacity
-              style={{ marginRight: 16 }}
-              // onPress={signOut}
-            >
-              <Feather name="log-out" size={24} color="#BDBDBD" />
-            </TouchableOpacity>
           ),
         }}
       />

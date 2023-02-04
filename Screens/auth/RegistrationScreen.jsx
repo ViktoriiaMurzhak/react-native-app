@@ -41,8 +41,6 @@ export default function RegistrationScreen({ navigation }) {
     Keyboard.dismiss()
     console.log('state', state)
     setState(initialState)
-
-    // navigation.navigate('Posts')
   }
 
   const keyboardHide = () => {
