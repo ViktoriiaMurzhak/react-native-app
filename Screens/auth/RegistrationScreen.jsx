@@ -16,11 +16,14 @@ import {
   Image,
 } from 'react-native'
 import { Camera, CameraType } from 'expo-camera'
+import { useDispatch } from 'react-redux'
+
+import { authSignUpUser } from '../../redux/auth/authOperations'
 
 const initialState = {
-  login: '',
   email: '',
   password: '',
+  login: '',
 }
 
 export default function RegistrationScreen({ navigation }) {
@@ -29,6 +32,8 @@ export default function RegistrationScreen({ navigation }) {
   const [isPasswordSecure, setIsPasswordSecure] = useState(true)
   const [camera, setCamera] = useState(null)
   const [photo, setPhoto] = useState('')
+
+  const dispatch = useDispatch()
 
   const takePhoto = async () => {
     const { status } = await Camera.requestCameraPermissionsAsync()
@@ -39,7 +44,7 @@ export default function RegistrationScreen({ navigation }) {
   const registration = () => {
     setIsShowKeyboard(false)
     Keyboard.dismiss()
-    console.log('state', state)
+    dispatch(authSignUpUser(state))
     setState(initialState)
   }
 
@@ -167,6 +172,7 @@ export default function RegistrationScreen({ navigation }) {
               <TouchableOpacity style={styles.btn} onPress={registration}>
                 <Text style={styles.btnText}>Зареєструватися</Text>
               </TouchableOpacity>
+
               <TouchableOpacity onPress={() => navigation.navigate('Login')}>
                 <Text style={styles.login}>Вже є аккаунт? Увійти</Text>
               </TouchableOpacity>
