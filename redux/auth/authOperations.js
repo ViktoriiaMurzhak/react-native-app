@@ -1,15 +1,32 @@
 import db from '../../firebase/config'
 import { authSlice } from './authReducer'
 
+const { updateUserProfile, authSignOut, authStateChange } = authSlice.actions
+
 export const authSignUpUser =
-  ({ email, password, login }) =>
+  ({ login, mail, password, photo }) =>
   async (dispatch, getState) => {
     try {
-      const { user } = await db
-        .auth()
-        .createUserWithEmailAndPassword(email, password)
-      dispatch(authSlice.actions.updateUserProfile({ userId: user.uid }))
-      console.log('user', user)
+      await db.auth().createUserWithEmailAndPassword(mail, password)
+
+      const user = await db.auth().currentUser
+
+      await user.updateProfile({
+        displayName: login,
+        email: mail,
+        photoURL: photo,
+      })
+
+      const { displayName, uid, email, photoURL } = await db.auth().currentUser
+
+      const userUpdateProfile = {
+        login: displayName,
+        userId: uid,
+        email: email,
+        photo: photoURL,
+      }
+
+      dispatch(updateUserProfile(userUpdateProfile))
     } catch (err) {
       console.log('err', err.message)
     }
@@ -20,7 +37,6 @@ export const authSignInUser =
   async (dispatch, getState) => {
     try {
       const user = await db.auth().signInWithEmailAndPassword(email, password)
-      console.log('user', user)
     } catch (err) {
       console.log('err', err.message)
     }
@@ -28,6 +44,28 @@ export const authSignInUser =
 
 export const authSignOutUser = () => async (dispatch, getState) => {
   try {
+    await db.auth().signOut()
+
+    dispatch(authSignOut())
+  } catch (err) {
+    console.log('err', err.message)
+  }
+}
+
+export const authStateChangeUser = () => async (dispatch, getState) => {
+  try {
+    await db.auth().onAuthStateChanged((user) => {
+      if (user) {
+        const userUpdateProfile = {
+          userId: user.uid,
+          login: user.displayName,
+          photo: user.photoURL,
+          email: user.email,
+        }
+        dispatch(authStateChange({ stateChange: true }))
+        dispatch(updateUserProfile(userUpdateProfile))
+      }
+    })
   } catch (err) {
     console.log('err', err.message)
   }
